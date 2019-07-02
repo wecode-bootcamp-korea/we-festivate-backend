@@ -1,6 +1,5 @@
 dbSettings =  {
-        'default':
-        {
+        'default':{
             'ENGINE': 'mysql.connector.django',
             'NAME': 'wef',
             'USER': 'root',
