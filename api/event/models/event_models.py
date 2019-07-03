@@ -15,3 +15,6 @@ class EventPost(models.Model):
     writer = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)  # User.models 파일 추가 필요
     create_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    class Meta:
+        db_table = "event"
+        app_label = "event"
