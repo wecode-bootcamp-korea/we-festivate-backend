@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-from  user.models  import User
+from user.models  import User
 
 class EventPost(models.Model):
     title = models.CharField(max_length=50)
