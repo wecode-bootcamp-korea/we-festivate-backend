@@ -2,3 +2,6 @@ certifi==2019.6.16
 chardet==3.0.4
 Django==2.2.2
 django-cors-headers==3.0.2
+mysql-connector-python
+dcrypt
+
