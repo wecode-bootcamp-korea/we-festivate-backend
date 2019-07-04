@@ -1,3 +1,9 @@
+#기타 무시해도 되는 파일들
+db.sqlite3
+*.pyc
+.DS_Store
+__puchache__
+
 #personal setting file -  DB settings
 my_settings.py
 
