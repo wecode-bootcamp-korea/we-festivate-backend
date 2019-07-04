@@ -2,6 +2,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.event_test),
+    path('/', views.event_test),
         ]
 
