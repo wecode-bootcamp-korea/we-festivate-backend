@@ -13,7 +13,7 @@ class EventPost(models.Model):
     current_rsvp = models.IntegerField(default=0)               # 현재 신청 인원
     event_page_url = models.URLField(max_length=100)            # members.wework.com 에 올려져있는 이벤트 url 링크
     main_text = models.TextField(max_length=2000 ,blank=True)   # 본문 내용
-    photo_url = models.CharField(max_length=100, blank=True)    # 사진을 저장한 url
+    photo_url = models.CharField(max_length=300, blank=True)    # 사진을 저장한 url
     event_host = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, default=1)
     create_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
