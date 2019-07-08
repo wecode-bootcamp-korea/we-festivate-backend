@@ -5,13 +5,11 @@ import bcrypt
 from .models import User
 from django.views import View
 from django.http import JsonResponse, HttpResponse
+from api.settings import wef_key
 
 
 
 class UserView(View):
-    def get(self, request):
-        return HttpResponse("문자열 하나 써보죠")
-    
     def post(self, request):
         new_user_info = json.loads(request.body)
 
@@ -37,19 +35,39 @@ class UserView(View):
 
         return JsonResponse({'message' : '회원가입이 완료되었습니다.'}, status = 200)
 
-# class LoginView(View):
-#     def post(self, request):
-#         login_user_info = json.loads(request, body)
-#         encoded_jwt = jwt.encode({'user_id': },, algorithm='HS256')        
-#         user = User.objects.get(id = user_id)
+'''
+로그인 순서
+유저가 아이디, 패스워드 입력 > 받은 데이터 변수에 저장하기 => 완료
+암호화한 패스워드랑 유저가 입력한 패스워드랑 비교
+로그인성공하면 access token을 클라이언트에게 전송
+다음부터는 access token을 첨부해서 request를 서버에 전송함으로써 매번 로그인해도 되지 않도록 한다.
 
-#         if bcrypt.checkpw(login_user_info['password'].encode('UTP-8'), user.password.encode("UTF-8"):
-#             return jsonResponse(
-#                 {
-                    
-#             )
-        
-          
-                    
+'''
+
+class LoginView(View):
+    
+    def post(self, request):
+        login_user_info = json.loads(request.body) #받은 데이터 변수에 저장
+        login_user_id = login_user_info['user_id'] #아이디만 따로 변수에 저장
+
+
+        if not User.objects.filter(user_id = login_user_id).exists(): # 디비에 입력된 아이디가 있는지 확인하고, 없으면 아래 메세지 리턴
+            return JsonResponse ({'message':'가입된 아이디가 아닙니다.'}, status = 400)
+
+        user = User.objects.get(user_id = login_user_id) #위에서 통과되면 유저아이디와 같은 값을 DB에서 찾아서 변수에 저장   
+
+        encoded_jwt = jwt.encode({'user_id':user.user_id}, wef_key, algorithm='HS256') # jwt토큰 생성
+    
+        if not bcrypt.checkpw(login_user_info['password'].encode('UTF-8'), user.password.encode("UTF-8")): #패스워드가 일치하는지 확인
+            return JsonResponse({'message': '패스워드가 일치하지 않습니다.'}, status = 400)
+        else:
+            return JsonResponse({
+                'access_token': encoded_jwt.decode("UTF-8"),
+                'user_name': user.name
+            }, status = 200)
+            
+
+
 
         
+            
