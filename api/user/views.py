@@ -50,13 +50,13 @@ class LoginView(View):
             return JsonResponse ({'message':'가입된 아이디가 아닙니다.'}, status = 400)
 
         user = User.objects.get(user_id = login_user_id) #위에서 통과되면 유저아이디와 같은 값을 DB에서 찾아서 변수에 저장   
-
+        
         if bcrypt.checkpw(login_user_info['password'].encode('UTF-8'), user.password.encode("UTF-8")): #패스워드가 일치하는지 확인
-            encoded_jwt = jwt.encode({'user_id':user.id}, wef_key, algorithm='HS256') # jwt토큰 생성
+            encoded_jwt = jwt.encode({'user.id':user.id}, wef_key, algorithm='HS256') # jwt토큰 생성
             return JsonResponse({
                 'access_token': encoded_jwt.decode("UTF-8"),
                 'user_name': user.name,
-                'user_type': user.user_type
+                'user_type_id': user.user_type_id
             }, status = 200)
         else:
             return JsonResponse({'message': '패스워드가 일치하지 않습니다.'}, status = 400)
