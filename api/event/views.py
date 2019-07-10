@@ -4,23 +4,25 @@ from django.views import View
 from django.http import JsonResponse,HttpResponse
 from datetime import datetime
 from django.utils.dateformat import DateFormat
+from urllib import parse
 import json
-
+post_num = 8
 def event_test(request):
     return HttpResponse("<h1>테스트</h1>")
 
 def newest(request):
-    event_list = list(EventPost.objects.order_by('created_at').select_related('building').values('id','title','photo_url','date','max_rsvp','current_rsvp','building__name')[:8])
+    event_list = list(EventPost.objects.order_by('created_at').select_related('building').values('id','title','photo_url','date','max_rsvp','current_rsvp','building__name')[:post_num])
     return JsonResponse(event_list, safe=False)
 
 def priority(request):
-    todayStr=str(DateFormat(datetime.now())) #.format("ymd")
-    print(todayStr)
-    event_list = list(EventPost.objects.filter(date=todayStr).select_related('building').values('id','title','photo_url','date','max_rsvp','current_rsvp','building__name')[:8])
+    todayStr=str(DateFormat(datetime.now()).format("ymd"))
+    event_list = list(EventPost.objects.filter(date=todayStr).select_related('building').values('id','title','photo_url','date','max_rsvp','current_rsvp','building__name')[:post_num])
     return JsonResponse(event_list, safe=False)
 
-def all(request,start,end):
-    event_list = list(EventPost.objects.order_by('id').select_related('building').values('id','title','photo_url','date','max_rsvp','current_rsvp','building__name')[start:end])
+def all(request):
+    start_id = int(request.GET.get('start'))
+    end_id = int(request.GET.get('end'))
+    event_list = list(EventPost.objects.order_by('id').select_related('building').values('id','title','photo_url','date','max_rsvp','current_rsvp','building__name')[start_id:end_id])
     return JsonResponse(event_list, safe=False)
 
 def search(request):
