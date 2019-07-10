@@ -24,6 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '$!)^f7^$hlahdut%k^0%%*d$^no4vdxpm&1=tx+%&w_l+ld=5m'
 wef_key = 'e16d07ab071691cbd805dbcb5fa581ee86e613af10260292'
 
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -133,6 +134,7 @@ STATIC_URL = '/static/'
 #추가함
 CORS_ORIGIN_ALLOW_ALL=True
 #CORS_ALLOW_CREDENTIALS = True
+
 
 CORS_ALLOW_METHODS = (
   'DELETE',
