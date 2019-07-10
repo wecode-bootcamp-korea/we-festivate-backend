@@ -6,7 +6,6 @@ from .models import User
 from django.views import View
 from django.http import JsonResponse
 from api.settings import wef_key
-from user.utils import login_decorator
 
 class UserView(View):
     def post(self, request):
