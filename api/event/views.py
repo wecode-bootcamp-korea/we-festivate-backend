@@ -1,4 +1,4 @@
-from .models.event_models import EventPost, EventRsvp
+from .models.event_models import EventPost, EventRsvp, EventReply
 from user.models import User, UserType
 from .models.building_models import Building
 from django.views import View
@@ -50,30 +50,34 @@ class DetailView(View):
         print(f"event_id == {event_id}")
         event = EventPost.objects.get(pk=event_id)
         building =Building.objects.get(pk=event.building_id)
+        event_reply1 = list(EventReply.objects.values().filter(event_id_id=event_id))
+        print(event_reply1)
         print(building.name)
+        # return JsonResponse(event_reply1, safe=False)
         return JsonResponse ({
-            'event_id': event.id,
-            'title': event.title,
+            "event_id": event.id,
+            "title": event.title,
             #빌딩 이름
-            'building': building.name,
-            'place': event.place,
-            'date': event.date,
-            'start_time': event.start_time,
-            'end_time': event.end_time,
-            'max_rsvp': event.max_rsvp,
-            'current_rsvp': event.current_rsvp,
-            'event_page_url': event.event_page_url,
-            'main_text': event.main_text,
-            'create_at': event.created_at,
-            'updated_at': event.updated_at,
-            'event_host_id': event.event_host_id,
-            'photo_url': event.photo_url,
+            "building": building.name,
+            "place": event.place,
+            "date": event.date,
+            "start_time": event.start_time,
+            "end_time": event.end_time,
+            "max_rsvp": event.max_rsvp,
+            "current_rsvp": event.current_rsvp,
+            "event_page_url": event.event_page_url,
+            "main_text": event.main_text,
+            "create_at": event.created_at,
+            "updated_at": event.updated_at,
+            "event_host_id": event.event_host_id,
+            "photo_url": event.photo_url,
             #빌딩 세부 정보
-            'contact': building.contact,
-            'address': building.address,
-            'latitude': building.latitude,
-            'longitude': building.longitude,
-            'rsvp_result': rsvp_result
+            "contact": building.contact,
+            "address": building.address,
+            "latitude": building.latitude,
+            "longitude": building.longitude,
+            "rsvp_result": rsvp_result,
+            "event_reply": event_reply1
         }, safe=False)
 
 class RsvpView(View):
@@ -91,16 +95,26 @@ class RsvpView(View):
             rsvp_result = False
             rsvp_message = '이미 신청한 이벤트 입니다.'
         else :
-            print("들어왔네")
             rsvp_event.current_rsvp += 1
             rsvp_event.save()
             EventRsvp.objects.create(event_id_id=event_id, user_id_id=user1.id)
-            # newEventRsvp = EventRsvp.objects.create(event_id_id=event_id, user_id_id=user1.id)
             rsvp_result = True
             rsvp_message = '이벤트 신청이 정상 처리되었습니다.'
-            print(rsvp_message)
         return JsonResponse ({
             "current_rsvp": rsvp_event.current_rsvp,
             "rsvp_result": rsvp_result,
             "rsvp_message": rsvp_message
+        }, safe=False)
+
+class ReplyView(View):
+    def post(self, request, event_id):
+        reply_data = json.loads(request.body)
+        user1 = User.objects.get(user_id=reply_data["user_id"])
+        EventReply.objects.create(event_id_id=event_id, user_id_id=user1.id, reply_text=reply_data["reply_text"])
+        reply_result = True
+        reply_message = "님, 댓글이 정상적으로 등록되었습니다."
+        return JsonResponse ({
+            "user_id": user1.user_id,
+            "reply_result": True,
+            "reply_message": reply_message
         }, safe=False)

@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import DetailView, AllView, PriorityView, NewestView, RsvpView
+from .views import DetailView, AllView, PriorityView, NewestView, RsvpView, ReplyView
 
 urlpatterns = [
     path('/', views.event_test),
@@ -10,5 +10,6 @@ urlpatterns = [
     path('/search', views.search),
     path('/detail/<int:event_id>', DetailView.as_view()),
     path('/detail/<int:event_id>/rsvp', RsvpView.as_view()),
+    path('/detail/<int:event_id>/reply', ReplyView.as_view()),
 ]
 
