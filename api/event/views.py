@@ -1,4 +1,5 @@
-from .models.event_models import EventPost
+from .models.event_models import EventPost, EventRsvp
+from user.models import User, UserType
 from .models.building_models import Building
 from django.views import View
 from django.http import JsonResponse,HttpResponse
@@ -34,14 +35,22 @@ def search(request):
     return HttpResponse("<h1>검색 조건에 맞는 이벤트를 전달합니다! </h1>")
 
 class DetailView(View):
-    def get(self, request, event_id):
+    def post(self, request, event_id):
+        page_user = json.loads(request.body)
+        user1 = User.objects.get(user_id=page_user["user_id"])
+        print(user1.id)
+
+        if user1.id == 2:
+            rsvp_result = False
+        elif EventRsvp.objects.filter(user_id=user1.id).exists():
+            rsvp_result = True
+        else :
+            rsvp_result = False
+
         print(f"event_id == {event_id}")
         event = EventPost.objects.get(pk=event_id)
         building =Building.objects.get(pk=event.building_id)
         print(building.name)
-        # json_event = json.dumps(event)
-        #building_list = list(Building.objects.filter(pk= 1).values('id'))
-        #print(f"building_id == {event_list[0][id]}")
         return JsonResponse ({
             'event_id': event.id,
             'title': event.title,
@@ -63,5 +72,35 @@ class DetailView(View):
             'contact': building.contact,
             'address': building.address,
             'latitude': building.latitude,
-            'longitude': building.longitude
+            'longitude': building.longitude,
+            'rsvp_result': rsvp_result
+        }, safe=False)
+
+class RsvpView(View):
+    def post(self, request, event_id):
+        page_user = json.loads(request.body)
+        user1 = User.objects.get(user_id=page_user["user_id"])
+        rsvp_event = EventPost.objects.get(id=event_id)
+        if user1.id == 2:
+            rsvp_result = False
+            rsvp_message = '로그인 후 이벤트 신청이 가능합니다.'
+        elif rsvp_event.max_rsvp != 0 and rsvp_event.current_rsvp >= rsvp_event.max_rsvp:
+            rsvp_result =False
+            rsvp_message = '이벤트 신청이 완료 되었습니다. 댓글을 남겨주시면 대기자 명단 처리 하겠습니다.'
+        elif EventRsvp.objects.filter(user_id=user1.id).exists():
+            rsvp_result = False
+            rsvp_message = '이미 신청한 이벤트 입니다.'
+        else :
+            print("들어왔네")
+            rsvp_event.current_rsvp += 1
+            rsvp_event.save()
+            EventRsvp.objects.create(event_id_id=event_id, user_id_id=user1.id)
+            # newEventRsvp = EventRsvp.objects.create(event_id_id=event_id, user_id_id=user1.id)
+            rsvp_result = True
+            rsvp_message = '이벤트 신청이 정상 처리되었습니다.'
+            print(rsvp_message)
+        return JsonResponse ({
+            "current_rsvp": rsvp_event.current_rsvp,
+            "rsvp_result": rsvp_result,
+            "rsvp_message": rsvp_message
         }, safe=False)

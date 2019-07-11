@@ -23,8 +23,14 @@ class EventPost(models.Model):
         db_table = "event"
 #app_label = "event"  (현재 버전에서는 필요 없다고 함)
 
-# class EventRsvp(models.Model):
-#     User_id = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
+class EventRsvp(models.Model):
+    event_id = models.ForeignKey(EventPost, blank=True, null=True, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "event_rsvp"
 
 
 
