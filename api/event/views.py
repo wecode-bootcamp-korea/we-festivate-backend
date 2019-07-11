@@ -6,24 +6,29 @@ from datetime import datetime
 from django.utils.dateformat import DateFormat
 from urllib import parse
 import json
-post_num = 8
+POST_NUM = 8
 def event_test(request):
     return HttpResponse("<h1>테스트</h1>")
 
-def newest(request):
-    event_list = list(EventPost.objects.order_by('created_at').select_related('building').values('id','title','photo_url','date','max_rsvp','current_rsvp','building__name')[:post_num])
-    return JsonResponse(event_list, safe=False)
+class NewestView(View):
+    def get(self, request):
+        post_num = int(request.GET.get('num',POST_NUM))
+        event_list = list(EventPost.objects.order_by('created_at').select_related('building').values('id','title','photo_url','date','max_rsvp','current_rsvp','building__name')[:post_num])
+        return JsonResponse(event_list, safe=False)
 
-def priority(request):
-    todayStr=str(DateFormat(datetime.now()).format("ymd"))
-    event_list = list(EventPost.objects.filter(date=todayStr).select_related('building').values('id','title','photo_url','date','max_rsvp','current_rsvp','building__name')[:post_num])
-    return JsonResponse(event_list, safe=False)
+class PriorityView(View):
+    def get(self, request):
+        post_num = int(request.GET.get('num',POST_NUM))
+        todayStr = str(DateFormat(datetime.now()).format("ymd"))
+        event_list = list(EventPost.objects.filter(date=todayStr).select_related('building').values('id','title','photo_url','date','max_rsvp','current_rsvp','building__name')[:post_num])
+        return JsonResponse(event_list, safe=False)
 
-def all(request):
-    start_id = int(request.GET.get('start'))
-    end_id = int(request.GET.get('end'))
-    event_list = list(EventPost.objects.order_by('id').select_related('building').values('id','title','photo_url','date','max_rsvp','current_rsvp','building__name')[start_id:end_id])
-    return JsonResponse(event_list, safe=False)
+class AllView(View):
+    def get(self,request):
+        start_id = int(request.GET.get('start',0))
+        end_id = int(request.GET.get('end',POST_NUM))
+        event_list = list(EventPost.objects.order_by('id').select_related('building').values('id','title','photo_url','date','max_rsvp','current_rsvp','building__name')[start_id:end_id])
+        return JsonResponse(event_list, safe=False)
 
 def search(request):
     return HttpResponse("<h1>검색 조건에 맞는 이벤트를 전달합니다! </h1>")
