@@ -1,13 +1,14 @@
 from django.urls import path
 from . import views
-from .views import DetailView
+from .views import DetailView, AllView, PriorityView, NewestView
 
 urlpatterns = [
     path('/', views.event_test),
-    path('/newest', views.newest),
-    path('/priority', views.priority),
-    path('/all', views.all),
+    path('/newest', NewestView.as_view()),
+    path('/priority', PriorityView.as_view()),
+    path('/all', AllView.as_view()),
     path('/search', views.search),
     path('/detail/<int:event_id>', DetailView.as_view()),
+    # path('/detail/rsvp', RsvpView.as_view()),
 ]
 
