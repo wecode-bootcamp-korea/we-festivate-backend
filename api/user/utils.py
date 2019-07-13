@@ -20,17 +20,18 @@ def login_required(func):
     6) 테스트 실행 후 오류가 있는지 확인 
     '''
     def wrapper(self, request, *args, **kwargs): #access token이 헤더에 들어있음
-    
-        if "Authorization" not in request.headers: #1)번
-            return JsonResponse({"error_code":"INVALID_LOGIN"}, status=401)
         
-        encode_token = request.headers["Authorization"] 
+        if request.headers["Authorization"] == "non_user":
+            return func(self, request, *args, **kwargs)
+            
+        if "Authorization" not in request.headers: #1)번
+            return JsonResponse({"error_code" : "INVALID_LOGIN"}, status=401)
+        
+        encode_token     = request.headers["Authorization"] 
 
         try:
-            data = jwt.decode(encode_token, wef_key, algorithm='HS256') #2번)decode를 하게 될 경우 프론트엔드에 전달했던 페이로드값만 나옴(즉 로그인뷰에 바디)
-            
-            user = User.objects.get(id = data["id"])#3번
-            
+            data         = jwt.decode(encode_token, wef_key, algorithm='HS256') #2번)decode를 하게 될 경우 프론트엔드에 전달했던 페이로드값만 나옴(즉 로그인뷰에 바디)
+            user         = User.objects.get(id = data["id"])#3번
             request.user = user #4번
 
         except jwt.DecodeError: #2번 error
