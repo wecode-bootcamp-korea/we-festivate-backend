@@ -25,9 +25,9 @@ def login_required(func):
             return func(self, request, *args, **kwargs)
             
         if "Authorization" not in request.headers: #1)번
-            return JsonResponse({"error_code":"INVALID_LOGIN"}, status=401)
+            return JsonResponse({"error_code" : "INVALID_LOGIN"}, status=401)
         
-        encode_token = request.headers["Authorization"] 
+        encode_token     = request.headers["Authorization"] 
 
         try:
             data         = jwt.decode(encode_token, wef_key, algorithm='HS256') #2번)decode를 하게 될 경우 프론트엔드에 전달했던 페이로드값만 나옴(즉 로그인뷰에 바디)
