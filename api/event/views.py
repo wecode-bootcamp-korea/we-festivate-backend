@@ -8,11 +8,11 @@ from django.utils.dateformat import DateFormat
 from urllib import parse
 import json
 
-POST_NUM = 8
+POST_DEFAULT_NUM = 8
 
 class NewestView(View):
     def get(self, request):
-        post_num    = int(request.GET.get('num', POST_NUM))
+        post_num    = int(request.GET.get('num', POST_DEFAULT_NUM))
         event_list  = list(EventPost.objects.order_by('-created_at').select_related('building').values(
             'id',
             'title',
@@ -27,7 +27,7 @@ class NewestView(View):
 class PriorityView(View):
 
     def get(self, request):
-        post_num    = int(request.GET.get('num', POST_NUM))
+        post_num    = int(request.GET.get('num', POST_DEFAULT_NUM))
         todayStr    = str(DateFormat(datetime.now()).format("ymd"))
         event_list  = list(EventPost.objects.filter(date = todayStr).select_related('building').values(
             'id',
@@ -43,7 +43,7 @@ class AllView(View):
 
     def get(self, request):
         start_id    = int(request.GET.get('start', 0))
-        end_id      = int(request.GET.get('end', POST_NUM))
+        end_id      = int(request.GET.get('end', POST_DEFAULT_NUM))
         event_list  = list(EventPost.objects.order_by('-id').select_related('building').values(
             'id',
             'title',
