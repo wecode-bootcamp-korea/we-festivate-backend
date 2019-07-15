@@ -263,7 +263,7 @@ class NewEventView(View):
             date        = new_event["date"],
             start_time  = new_event["start_time"],
             end_time    = new_event["end_time"],
-            ax_rsvp     = new_event["max_rsvp"],
+            max_rsvp    = new_event["max_rsvp"],
             main_text   = new_event["main_text"],
             event_host  = user_info,
             photo_url   = new_event["photo_url"]
