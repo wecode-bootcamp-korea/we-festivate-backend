@@ -146,11 +146,22 @@ class RsvpView(View):
             user_id         = user_info.id,
             event_id        = event_id
             ).exists():
+            #이미 참석을 눌렀던 사용자는 다시 참석을 누르면 참석 취소됨.
+            rsvp_event.current_rsvp -= 1
+            rsvp_event.save()
+            delete_rsvp = EventRsvp.objects.filter(
+                event_id    = event_id,
+                user_id     = user_info.id
+                )
+            delete_rsvp.all().delete()
             rsvp_result     = False
-            rsvp_message    = 'rsvp_reserved'
-        elif rsvp_event.current_rsvp >= rsvp_event.max_rsvp: #추후 개선 필요
+            rsvp_message    = 'rsvp_canceled'
+
+        elif rsvp_event.current_rsvp >= rsvp_event.max_rsvp:
+            #동시에 2인 이상이 참석을 눌렀을 경우 버그 발생 가능성이 있음. 추후 개선 필요.
             rsvp_result     = False
             rsvp_message    = 'rsvp_overflow'
+
         else :
             rsvp_event.current_rsvp += 1
             rsvp_event.save()
@@ -181,8 +192,18 @@ class LikeView(View):
             user_id         = user_info.id,
             event_id        = event_id
             ).exists():
+
+            like_event.like_num -= 1
+            like_event.save()
+            delete_like = EventLike.objects.filter(
+                event_id    = event_id,
+                user_id     = user_info.id
+                )
+            delete_like.all().delete()
+
             like_result     = False
-            like_message    = 'like_fail'
+            like_message    = 'like_canceled'
+
         else :
             like_event.like_num += 1
             like_event.save()

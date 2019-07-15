@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user',
     'event',
+    'mypage',
     'corsheaders'
 ]
 
@@ -110,7 +111,7 @@ PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.MD5PasswordHasher',
     'django.contrib.auth.hashers.CryptPasswordHasher',
     )
-        
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
